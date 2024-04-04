@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="no">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,8 @@
             font-size: 18px;
         }
 
-        input, select {
+        input,
+        select {
             font-size: 16px;
             padding: 8px;
             margin-bottom: 10px;
@@ -49,7 +51,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             border: 1px solid #ddd;
             text-align: left;
@@ -70,6 +73,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Statistikkportal</h1>
     <form id="statisticsForm">
@@ -111,29 +115,52 @@
     <div id="results"></div>
 
     <script>
-        document.getElementById('statisticsForm').addEventListener('submit', function (e) {
+        document.getElementById('statisticsForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            // JavaScript for håndtering av skjemaoppføring forblir uendret
-        });
 
-        // Legg til hendelseslytter for endring av regiontype
-        document.getElementById('regionType').addEventListener('change', function () {
-            const regionType = this.value;
-            const regionCodeInput = document.getElementById('regions');
-            const regionCodeHint = document.getElementById('regionCodeHint');
+            // Viser indikator for lasting
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'block';
 
-            if (regionType === 'kommune') {
-                // Tillat 4-sifret kommunekode
-                regionCodeInput.placeholder = 'F.eks., 0301, 1103';
-                regionCodeHint.textContent = 'Skriv inn kommune/fylkeskoder, separert med komma (4 sifre)';
-                regionCodeInput.pattern = '\\d{4}(,\\s*\\d{4})*';
-            } else if (regionType === 'fylke') {
-                // Tillat 2-sifret fylkeskode
-                regionCodeInput.placeholder = 'F.eks., 01, 02';
-                regionCodeHint.textContent = 'Skriv inn kommune/fylkeskoder, separert med komma (2 sifre)';
-                regionCodeInput.pattern = '\\d{2}(,\\s*\\d{2})*';
+            // Henter verdier fra skjemaet
+            const statisticVariable = document.getElementById('statisticVariable').value;
+            const regionType = document.getElementById('regionType').value;
+            const regions = document.getElementById('regions').value.split(',');
+            const years = [
+                document.getElementById('year1').value,
+                document.getElementById('year2').value,
+                document.getElementById('year3').value
+            ];
+
+            // Utfører POST-forespørsel til serveren
+            try {
+                const response = await fetch('/api/data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ statisticVariable, regionType, regions, years })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+
+                const statistics = await response.json();
+
+                // Behandle og vis resultatene her...
+                console.log(statistics);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('errorMessage').textContent = 'Feil ved henting av data. Vennligst prøv igjen senere.';
             }
+
+            // Skjuler indikator for lasting
+            loadingIndicator.style.display = 'none';
         });
     </script>
+
 </body>
+
 </html>

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export async function fetchData(statisticVariable: string, regionType: string, regions: string[], years: string[]): Promise<any> {
     try {
-        const url = "https://www.ssb.no/statbank/table/11342";
+        const url = "https://data.ssb.no/api/v0/no/table/11342/";
 
         // Opprett spørring basert på brukerens input
         const query = {

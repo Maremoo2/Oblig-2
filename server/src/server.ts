@@ -1,11 +1,15 @@
 // server.ts
-import express from 'express';
+import express, { Request, Response } from 'express';
 import path from 'path'; // Import the 'path' module
 import { fetchData } from './dataFetcher';
 import { calculateStatistics } from './statisticsCalculator';
 
 const app = express();
 const PORT = 3000;
+
+app.get('/favicon.ico', (req: Request, res: Response) => {
+    res.status(204).send(); // Sender en 204 No Content-respons
+});
 
 app.use(express.json());
 

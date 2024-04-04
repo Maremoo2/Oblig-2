@@ -19,6 +19,9 @@ const dataFetcher_1 = require("./dataFetcher");
 const statisticsCalculator_1 = require("./statisticsCalculator");
 const app = (0, express_1.default)();
 const PORT = 3000;
+app.get('/favicon.ico', (req, res) => {
+    res.status(204).send(); // Sender en 204 No Content-respons
+});
 app.use(express_1.default.json());
 // Serve statiske filer fra klientens dist-mappen
 app.use(express_1.default.static(path_1.default.join(__dirname, '../client/dist')));
