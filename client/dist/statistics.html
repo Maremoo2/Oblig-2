@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistikkportal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        input, select {
+            font-size: 16px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #results {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 60px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Statistikkportal</h1>
+    <form id="statisticsForm">
+        <div>
+            <label for="statisticVariable">Statistikkvariabel:</label>
+            <select id="statisticVariable" name="statisticVariable" required>
+                <option value="befolkning">Befolkning per 1.1(personer)</option>
+                <option value="areal">Areal(km2)</option>
+                <option value="landareal">Landareal(km2)</option>
+                <option value="innbyggerePerKm2">Innbyggere per km2 landareal</option>
+            </select>
+        </div>
+        <div>
+            <label for="regionType">Regiontype:</label>
+            <select id="regionType" name="regionType" required>
+                <option value="kommune">Kommune</option>
+                <option value="fylke">Fylke</option>
+            </select>
+        </div>
+        <div>
+            <label for="regions">Regioner (kommaseparert):</label>
+            <input type="text" id="regions" name="regions" required placeholder="F.eks., 3101, 0117">
+            <small id="regionCodeHint">Skriv inn kommune/fylkeskoder, separert med komma</small>
+        </div>
+        <div>
+            <label for="year1">År 1:</label>
+            <input type="number" id="year1" name="year1" min="2007" max="2024" required>
+            <label for="year2">År 2:</label>
+            <input type="number" id="year2" name="year2" min="2007" max="2024" required>
+            <label for="year3">År 3:</label>
+            <input type="number" id="year3" name="year3" min="2007" max="2024" required>
+        </div>
+        <button type="submit">Hent Data</button>
+        <div class="loading" id="loadingIndicator">Laster data...</div>
+        <div class="error" id="errorMessage"></div>
+    </form>
+
+    <h2>Resultater:</h2>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('statisticsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            // JavaScript for håndtering av skjemaoppføring forblir uendret
+        });
+
+        // Legg til hendelseslytter for endring av regiontype
+        document.getElementById('regionType').addEventListener('change', function () {
+            const regionType = this.value;
+            const regionCodeInput = document.getElementById('regions');
+            const regionCodeHint = document.getElementById('regionCodeHint');
+
+            if (regionType === 'kommune') {
+                // Tillat 4-sifret kommunekode
+                regionCodeInput.placeholder = 'F.eks., 0301, 1103';
+                regionCodeHint.textContent = 'Skriv inn kommune/fylkeskoder, separert med komma (4 sifre)';
+                regionCodeInput.pattern = '\\d{4}(,\\s*\\d{4})*';
+            } else if (regionType === 'fylke') {
+                // Tillat 2-sifret fylkeskode
+                regionCodeInput.placeholder = 'F.eks., 01, 02';
+                regionCodeHint.textContent = 'Skriv inn kommune/fylkeskoder, separert med komma (2 sifre)';
+                regionCodeInput.pattern = '\\d{2}(,\\s*\\d{2})*';
+            }
+        });
+    </script>
+</body>
+</html>
